@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Combustible</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://unpkg.com/feather-icons"></script>
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #f8f9fa;
+            --text-color: #343a0;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--secondary-color);
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px var(--shadow-color);
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .header img {
+            max-width: 150px;
+            margin-bottom: 15px;
+        }
+        h1, h2 {
+            color: var(--text-color);
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .form-row {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .form-group input,
+        .form-group .calculated-field {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            width: 180px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            text-align: center;
+        }
+        .form-group input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+            outline: none;
+        }
+        .form-group .calculated-field {
+            background-color: #e9ecef;
+            color: #495057;
+            cursor: not-allowed;
+        }
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            margin-bottom: 15px;
+            gap: 10px;
+        }
+        .actions button {
+            padding: 15px;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            color: white;
+            transition: background-color 0.3s ease;
+        }
+        #clear-all-btn {
+            background-color: #ffc107;
+            color: #212529;
+        }
+        #clear-all-btn:hover {
+            background-color: #e0a800;
+        }
+        #export-excel {
+            background-color: #28a745;
+        }
+        #export-excel:hover {
+            background-color: #218838;
+        }
+        #export-pdf {
+            background-color: #dc3545;
+        }
+        #export-pdf:hover {
+            background-color: #c82333;
+        }
+        .table-responsive {
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 4px 10px var(--shadow-color);
+            min-width: 600px;
+        }
+        th, td {
+            border: 1px solid #e0e0e0;
+            padding: 12px;
+            text-align: left;
+        }
+        thead th {
+            background-color: #f8f9fa;
+            color: #666;
+            text-transform: uppercase;
+            font-size: 14px;
+        }
+        tbody tr:nth-child(even) {
+            background-color: #fcfcfc;
+        }
+        tbody tr:hover {
+            background-color: #f0f0f0;
+        }
+        td input, td select {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .action-icons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        .action-icons .guardar,
+        .action-icons .editar,
+        .action-icons .eliminar {
+            cursor: pointer;
+            width: 20px;
+            height: 20px;
+            transition: color 0.3s ease;
+        }
+        .action-icons .guardar {
+            color: var(--primary-color);
+        }
+        .action-icons .guardar:hover {
+            color: #0056b3;
+        }
+        .action-icons .editar {
+            color: #ffc107;
+        }
+        .action-icons .editar:hover {
+            color: #e0a800;
+        }
+        .action-icons .eliminar {
+            color: #dc3545;
+        }
+        .action-icons .eliminar:hover {
+            color: #c82333;
+        }
+        .summary {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f0f0f0;
+            border-radius: 8px;
+            text-align: center;
+            display: flex;
+            justify-content: space-around;
+            font-weight: bold;
+            flex-wrap: wrap;
+        }
+        .summary span {
+            margin: 5px;
+        }
+        .control-row {
+            background-color: #f8f9fa;
+            text-align: center;
+        }
+        .control-row td {
+            padding: 15px;
+        }
+        .control-icons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        .control-icons .add-truck, .control-icons .remove-truck, .control-icons .add-operator, .control-icons .remove-operator {
+            cursor: pointer;
+            width: 25px;
+            height: 25px;
+            transition: color 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .control-icons .add-truck, .control-icons .add-operator {
+            color: #28a745;
+        }
+        .control-icons .add-truck:hover, .control-icons .add-operator:hover {
+            color: #218838;
+        }
+        .control-icons .remove-truck, .control-icons .remove-operator {
+            color: #dc3545;
+        }
+        .control-icons .remove-truck:hover, .control-icons .remove-operator:hover {
+            color: #c82333;
+        }
+        
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTjBzE2zwCJ5fXAfaoq-bPfm6msAoIL9Ktv_Q&s" alt="Logo de Embotelladora La Reyna">
+            <h1>Embotelladora La Reyna</h1>
+        </div>
+        
+        <h2>Registro de combustible</h2>
+        <div class="actions">
+            <button id="export-excel" title="Exportar a Excel"><i class="fas fa-file-excel"></i></button>
+            <button id="export-pdf" title="Exportar a PDF"><i class="fas fa-file-pdf"></i></button>
+            <button id="clear-all-btn" title="Limpiar todos los registros"><i data-feather="trash-2"></i></button>
+        </div>
+        <p>Ingresa la cantidad de galones y el kilometraje para cada unidad. El día se llenará automáticamente.</p>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="fecha">Seleccione la fecha:</label>
+                <input type="date" id="fecha" required>
+            </div>
+            <div class="form-group">
+                <label for="lectura-inicial">Lectura Inicial:</label>
+                <input type="number" id="lectura-inicial" required>
+            </div>
+            <div class="form-group">
+                <label for="lectura-final">Lectura Final:</label>
+                <input type="number" id="lectura-final" required>
+            </div>
+            <div class="form-group">
+                <label for="diferencia">Diferencia:</label>
+                <div id="diferencia" class="calculated-field">0.00</div>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table id="tabla-registros">
+                <thead>
+                    <tr>
+                        <th data-label="Unidad">Unidad</th>
+                        <th data-label="Fecha">Fecha</th>
+                        <th data-label="Galones">Galones</th>
+                        <th data-label="Kilometraje">Kilometraje</th>
+                        <th data-label="Operador">Operador</th>
+                        <th data-label="Acción">Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    </tbody>
+                <tfoot>
+                    <tr class="control-row">
+                        <td colspan="6">
+                            <div class="control-icons">
+                                <span class="add-truck" title="Agregar nuevo camión">
+                                    <i class="fa-solid fa-truck"></i>
+                                    <i class="fa-solid fa-plus"></i>
+                                </span>
+                                <span class="remove-truck" title="Eliminar camión">
+                                    <i class="fa-solid fa-truck"></i>
+                                    <i class="fa-solid fa-minus"></i>
+                                </span>
+                                <i data-feather="user-plus" class="add-operator" title="Agregar nuevo operador"></i>
+                                <i data-feather="user-minus" class="remove-operator" title="Eliminar operador"></i>
+                            </div>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <div class="summary">
+            <span id="total-registros">Total de registros: 0</span>
+            <span id="total-galones">Suma de galones: 0.00</span>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const fechaInput = document.getElementById('fecha');
+            const lecturaInicialInput = document.getElementById('lectura-inicial');
+            const lecturaFinalInput = document.getElementById('lectura-final');
+            const diferenciaDiv = document.getElementById('diferencia');
+            const tablaRegistrosBody = document.querySelector('#tabla-registros tbody');
+            const exportExcelBtn = document.getElementById('export-excel');
+            const exportPdfBtn = document.getElementById('export-pdf');
+            const clearAllBtn = document.getElementById('clear-all-btn');
+            const totalRegistrosSpan = document.getElementById('total-registros');
+            const totalGalonesSpan = document.getElementById('total-galones');
+            const controlIconsDiv = document.querySelector('.control-icons');
+
+            const defaultListaUnidades = [
+                "320", "HR51", "299", "HR59", "339", "349", "HR41", "HR56", "333", 
+                "HR23", "325", "309", "292", "306", "HR25", "HR24", "350", "329", 
+                "259", "326", "HR44", "HR53", "288", "269", "255", "260", "239", 
+                "247", "Generador", "Patrulla"
+            ];
+
+            const defaultListaOperadores = [
+                "Edwin Mendoza", "Selvin Galindo"
+            ];
+            
+            const getListaUnidades = () => {
+                const listaGuardada = JSON.parse(localStorage.getItem('lista_unidades_v13'));
+                if (!listaGuardada || listaGuardada.length === 0) {
+                    localStorage.setItem('lista_unidades_v13', JSON.stringify(defaultListaUnidades));
+                    return defaultListaUnidades;
+                }
+                return listaGuardada;
+            };
+
+            const getListaOperadores = () => {
+                const listaGuardada = JSON.parse(localStorage.getItem('lista_operadores_v13'));
+                if (!listaGuardada || listaGuardada.length === 0) {
+                    localStorage.setItem('lista_operadores_v13', JSON.stringify(defaultListaOperadores));
+                    return defaultListaOperadores;
+                }
+                return listaGuardada;
+            };
+
+            const generarTablaRegistros = (fechaSeleccionada) => {
+                const registros = JSON.parse(localStorage.getItem('registros_combustible_v13')) || [];
+                const listaUnidades = getListaUnidades();
+                const listaOperadores = getListaOperadores();
+                tablaRegistrosBody.innerHTML = '';
+                
+                let totalGalones = 0;
+                let numRegistros = 0;
+
+                listaUnidades.forEach(unidad => {
+                    const registroExistente = registros.find(r => r.unidad === unidad && r.fecha === fechaSeleccionada);
+                    const row = tablaRegistrosBody.insertRow();
+                    
+                    if (registroExistente) {
+                        row.innerHTML = `
+                            <td data-label="Unidad">${unidad}</td>
+                            <td data-label="Fecha">${new Date(registroExistente.fecha).getUTCDate()}</td>
+                            <td data-label="Galones"><span class="galones-display">${registroExistente.galones}</span></td>
+                            <td data-label="Kilometraje"><span class="kilometraje-display">${registroExistente.kilometraje}</span></td>
+                            <td data-label="Operador"><span class="operador-display">${registroExistente.operador}</span></td>
+                            <td data-label="Acción">
+                                <div class="action-icons" data-id="${registroExistente.id}" data-unidad="${unidad}">
+                                    <i data-feather="edit" class="editar"></i>
+                                    <i data-feather="trash-2" class="eliminar"></i>
+                                </div>
+                            </td>
+                        `;
+                        totalGalones += registroExistente.galones;
+                        numRegistros++;
+                    } else {
+                        const operadorOptions = listaOperadores.map(op => `<option value="${op}">${op}</option>`).join('');
+                        row.innerHTML = `
+                            <td data-label="Unidad">${unidad}</td>
+                            <td data-label="Fecha">${new Date(fechaSeleccionada).getUTCDate()}</td>
+                            <td data-label="Galones"><input type="number" step="0.01" class="galones-input" required></td>
+                            <td data-label="Kilometraje"><input type="number" class="kilometraje-input" required></td>
+                            <td data-label="Operador"><select class="operador-select">${operadorOptions}</select></td>
+                            <td data-label="Acción">
+                                <div class="action-icons" data-unidad="${unidad}">
+                                    <i data-feather="save" class="guardar"></i>
+                                </div>
+                            </td>
+                        `;
+                    }
+                });
+
+                totalRegistrosSpan.textContent = `Total de registros: ${numRegistros}`;
+                totalGalonesSpan.textContent = `Suma de galones: ${totalGalones.toFixed(2)}`;
+                feather.replace();
+            };
+
+            const guardarRegistro = (unidad, galones, kilometraje, operador, fecha) => {
+                let registros = JSON.parse(localStorage.getItem('registros_combustible_v13')) || [];
+                
+                const nuevoRegistro = {
+                    id: Date.now(),
+                    fecha: fecha,
+                    unidad: unidad,
+                    galones: galones,
+                    kilometraje: kilometraje,
+                    operador: operador
+                };
+                
+                registros.push(nuevoRegistro);
+                localStorage.setItem('registros_combustible_v13', JSON.stringify(registros));
+                generarTablaRegistros(fecha);
+            };
+
+            const eliminarRegistro = (id, fecha) => {
+                let registros = JSON.parse(localStorage.getItem('registros_combustible_v13')) || [];
+                if (confirm('¿Estás seguro de que quieres eliminar este registro?')) {
+                    registros = registros.filter(registro => registro.id !== id);
+                    localStorage.setItem('registros_combustible_v13', JSON.stringify(registros));
+                    generarTablaRegistros(fecha);
+                }
+            };
+
+            const editarRegistro = (id, fecha) => {
+                const registros = JSON.parse(localStorage.getItem('registros_combustible_v13')) || [];
+                const registroAEditar = registros.find(registro => registro.id === id);
+
+                if (registroAEditar) {
+                    const galones = prompt('Introduce los nuevos galones:', registroAEditar.galones);
+                    const kilometraje = prompt('Introduce el nuevo kilometraje:', registroAEditar.kilometraje);
+
+                    if (galones !== null && kilometraje !== null) {
+                        registroAEditar.galones = parseFloat(galones) || registroAEditar.galones;
+                        registroAEditar.kilometraje = parseInt(kilometraje) || registroAEditar.kilometraje;
+
+                        let nuevosRegistros = registros.map(r => r.id === id ? registroAEditar : r);
+                        localStorage.setItem('registros_combustible_v13', JSON.stringify(nuevosRegistros));
+                        generarTablaRegistros(fecha);
+                    }
+                }
+            };
+            
+            const exportToCsv = () => {
+                const registros = JSON.parse(localStorage.getItem('registros_combustible_v13')) || [];
+                if (registros.length === 0) {
+                    alert("No hay registros para exportar.");
+                    return;
+                }
+                let csvContent = "data:text/csv;charset=utf-8,";
+                const headers = ["Unidad", "Día", "Galones", "Kilometraje", "Operador"];
+                csvContent += headers.join(";") + "\n";
+                registros.forEach(registro => {
+                    const dia = new Date(registro.fecha).getUTCDate();
+                    let row = [registro.unidad, dia, registro.galones, registro.kilometraje, registro.operador];
+                    csvContent += row.join(";") + "\n";
+                });
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", "registros_combustible.csv");
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            };
+
+            const exportToPdf = () => {
+                const registros = JSON.parse(localStorage.getItem('registros_combustible_v13')) || [];
+                if (registros.length === 0) {
+                    alert("No hay registros para exportar.");
+                    return;
+                }
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                doc.autoTable({
+                    head: [['Unidad', 'Día', 'Galones', 'Kilometraje', 'Operador']],
+                    body: registros.map(registro => [
+                        registro.unidad,
+                        new Date(registro.fecha).getUTCDate(),
+                        registro.galones,
+                        registro.kilometraje,
+                        registro.operador
+                    ]),
+                    startY: 20,
+                });
+                doc.save('registros_combustible.pdf');
+            };
+            
+            const calcularDiferencia = () => {
+                const inicial = parseFloat(lecturaInicialInput.value);
+                const final = parseFloat(lecturaFinalInput.value);
+                if (!isNaN(inicial) && !isNaN(final)) {
+                    diferenciaDiv.textContent = (final - inicial).toFixed(2);
+                } else {
+                    diferenciaDiv.textContent = '0.00';
+                }
+            };
+
+            // Eventos
+            fechaInput.addEventListener('change', (e) => {
+                generarTablaRegistros(e.target.value);
+            });
+
+            lecturaInicialInput.addEventListener('input', calcularDiferencia);
+            lecturaFinalInput.addEventListener('input', calcularDiferencia);
+
+            tablaRegistrosBody.addEventListener('click', (e) => {
+                const fechaSeleccionada = fechaInput.value;
+                if (e.target.closest('.guardar')) {
+                    const button = e.target.closest('.guardar');
+                    const unidad = button.closest('.action-icons').dataset.unidad;
+                    const row = button.closest('tr');
+                    const galonesInput = row.querySelector('.galones-input');
+                    const kilometrajeInput = row.querySelector('.kilometraje-input');
+                    const operadorSelect = row.querySelector('.operador-select');
+                    
+                    const galones = parseFloat(galonesInput.value);
+                    const kilometraje = parseInt(kilometrajeInput.value);
+                    const operador = operadorSelect.value;
+
+                    if (fechaSeleccionada && galones && kilometraje && operador) {
+                        guardarRegistro(unidad, galones, kilometraje, operador, fechaSeleccionada);
+                    } else {
+                        alert('Por favor, selecciona una fecha y llena todos los campos.');
+                    }
+                } else if (e.target.closest('.editar')) {
+                    const button = e.target.closest('.editar');
+                    const id = parseInt(button.closest('.action-icons').dataset.id);
+                    editarRegistro(id, fechaSeleccionada);
+                } else if (e.target.closest('.eliminar')) {
+                    const button = e.target.closest('.eliminar');
+                    const id = parseInt(button.closest('.action-icons').dataset.id);
+                    eliminarRegistro(id, fechaSeleccionada);
+                }
+            });
+
+            // Se delegó el evento de clic al contenedor para gestionar los íconos
+            controlIconsDiv.addEventListener('click', (e) => {
+                if (e.target.closest('.add-truck')) {
+                    const nuevoCamion = prompt("Ingrese el número o nombre del nuevo camión:");
+                    if (nuevoCamion) {
+                        let listaUnidades = getListaUnidades();
+                        if (!listaUnidades.includes(nuevoCamion)) {
+                            listaUnidades.push(nuevoCamion);
+                            localStorage.setItem('lista_unidades_v13', JSON.stringify(listaUnidades));
+                            generarTablaRegistros(fechaInput.value);
+                            alert(`El camión ${nuevoCamion} ha sido agregado a la lista.`);
+                        } else {
+                            alert(`El camión ${nuevoCamion} ya existe en la lista.`);
+                        }
+                    }
+                } else if (e.target.closest('.remove-truck')) {
+                    const camionAEliminar = prompt("Ingrese el número o nombre del camión a eliminar:");
+                    if (camionAEliminar) {
+                        let listaUnidades = getListaUnidades();
+                        const index = listaUnidades.indexOf(camionAEliminar);
+                        if (index > -1) {
+                            if (confirm(`¿Estás seguro de que quieres eliminar el camión ${camionAEliminar} y todos sus registros asociados?`)) {
+                                // Eliminar camión de la lista
+                                listaUnidades.splice(index, 1);
+                                localStorage.setItem('lista_unidades_v13', JSON.stringify(listaUnidades));
+                                
+                                // Eliminar registros asociados a ese camión
+                                let registros = JSON.parse(localStorage.getItem('registros_combustible_v13')) || [];
+                                const registrosActualizados = registros.filter(r => r.unidad !== camionAEliminar);
+                                localStorage.setItem('registros_combustible_v13', JSON.stringify(registrosActualizados));
+                                
+                                generarTablaRegistros(fechaInput.value);
+                                alert(`El camión ${camionAEliminar} y sus registros han sido eliminados.`);
+                            }
+                        } else {
+                            alert(`El camión ${camionAEliminar} no se encuentra en la lista.`);
+                        }
+                    }
+                } else if (e.target.closest('.add-operator')) {
+                    const nuevoOperador = prompt("Ingrese el nombre del nuevo operador:");
+                    if (nuevoOperador) {
+                        let listaOperadores = getListaOperadores();
+                        if (!listaOperadores.includes(nuevoOperador)) {
+                            listaOperadores.push(nuevoOperador);
+                            localStorage.setItem('lista_operadores_v13', JSON.stringify(listaOperadores));
+                            generarTablaRegistros(fechaInput.value);
+                            alert(`El operador ${nuevoOperador} ha sido agregado a la lista.`);
+                        } else {
+                            alert(`El operador ${nuevoOperador} ya existe en la lista.`);
+                        }
+                    }
+                } else if (e.target.closest('.remove-operator')) {
+                    const operadorAEliminar = prompt("Ingrese el nombre del operador a eliminar:");
+                    if (operadorAEliminar) {
+                        let listaOperadores = getListaOperadores();
+                        const index = listaOperadores.indexOf(operadorAEliminar);
+                        if (index > -1) {
+                            if (confirm(`¿Estás seguro de que quieres eliminar al operador ${operadorAEliminar}? Ten en cuenta que esto no eliminará los registros existentes que tenga asociados.`)) {
+                                listaOperadores.splice(index, 1);
+                                localStorage.setItem('lista_operadores_v13', JSON.stringify(listaOperadores));
+                                generarTablaRegistros(fechaInput.value);
+                                alert(`El operador ${operadorAEliminar} ha sido eliminado de la lista.`);
+                            }
+                        } else {
+                            alert(`El operador ${operadorAEliminar} no se encuentra en la lista.`);
+                        }
+                    }
+                }
+            });
+
+            clearAllBtn.addEventListener('click', () => {
+                if (confirm('¿Estás seguro de que quieres limpiar TODOS los registros? Esta acción no se puede deshacer.')) {
+                    localStorage.setItem('registros_combustible_v13', JSON.stringify([]));
+                    generarTablaRegistros(fechaInput.value);
+                }
+            });
+
+            exportExcelBtn.addEventListener('click', exportToCsv);
+            exportPdfBtn.addEventListener('click', exportToPdf);
+
+            // Carga inicial
+            fechaInput.value = new Date().toISOString().split('T')[0];
+            generarTablaRegistros(fechaInput.value);
+        });
+    </script>
+</body>
+</html>
